@@ -55,10 +55,10 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build Release (x86)
+      - name: Build Release (x86/Win32)
         working-directory: haggle_mod/build
         run: |
-          msbuild peggle-rl-bridge.sln /p:Configuration=Release /p:Platform=x86 /m
+          msbuild peggle-rl-bridge.sln /p:Configuration=Release /p:Platform=Win32 /m
 
       - name: List build output
         run: |
@@ -67,8 +67,9 @@ jobs:
       - name: Prepare artifacts
         run: |
           New-Item -ItemType Directory -Force -Path artifacts
-          Copy-Item haggle_mod/build/bin/Release-x86/peggle-rl-bridge.dll artifacts/
-          Copy-Item haggle_mod/build/bin/Release-x86/haggle-sdk.dll artifacts/
+          $binDir = Get-ChildItem -Directory haggle_mod/build/bin/ | Select-Object -First 1
+          Copy-Item "$($binDir.FullName)/peggle-rl-bridge.dll" artifacts/
+          Copy-Item "$($binDir.FullName)/haggle-sdk.dll" artifacts/
           # Create a zip for the release
           Compress-Archive -Path artifacts/* -DestinationPath peggle-rl-bridge-${{ github.ref_name }}.zip
 
