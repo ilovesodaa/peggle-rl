@@ -80,17 +80,20 @@ workspace "peggle-rl-bridge"
         includedirs { HAGGLE_SDK_PATH .. "/deps/minhook/include/" }
 
     -- Haggle SDK (shared lib dependency)
-    -- NOTE: PCH is intentionally disabled here. When building the SDK as a
-    -- sub-project with an external HAGGLE_SDK_PATH, Premake cannot correctly
-    -- match the pchsource path against the files glob (different path
-    -- normalization), so stdafx.cpp never gets the /Yc flag and the .pch file
-    -- is never created. The SDK is small enough that PCH is unnecessary.
+    -- NOTE: PCH compilation (pchheader/pchsource) is intentionally disabled
+    -- here. When building the SDK as a sub-project with an external
+    -- HAGGLE_SDK_PATH, Premake cannot correctly match the pchsource path
+    -- against the files glob (different path normalization), so stdafx.cpp
+    -- never gets the /Yc flag and the .pch file is never created.
+    -- We keep forceincludes so every .cpp still gets the needed headers.
     project "Haggle"
         targetname "haggle-sdk"
         language "c++"
         cppdialect "C++17"
         kind "sharedlib"
         warnings "off"
+
+        forceincludes "stdafx.hpp"
 
         dependson { "MinHook" }
         links { "MinHook" }
