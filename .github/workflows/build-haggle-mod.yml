@@ -13,7 +13,7 @@ name: Build Haggle Mod DLL
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - 'haggle_mod/**'
     tags:
