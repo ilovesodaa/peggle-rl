@@ -1,0 +1,29 @@
+# Single-level training config (example: level1 with PPO)
+# Good for debugging or curriculum learning
+
+algo: ppo
+action_mode: continuous
+env: PeggleSim-v0
+
+level: level1
+stage: null
+
+total_timesteps: 200_000
+save_freq: 50_000
+eval_freq: 10_000
+eval_episodes: 30
+seed: 42
+verbose: 1
+
+save_dir: checkpoints
+log_dir: logs
+
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01

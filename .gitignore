@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Training artifacts
+checkpoints/
+logs/
+wandb/
+*.zip
+
+# Extracted game data (not committed)
+peggle_extracted/
+data/levels/
+
+# Haggle mod build output
+haggle_mod/build/
+haggle_mod/*.sln
+haggle_mod/*.vcxproj*
+*.dll
+*.pdb
+*.lib
+*.exp
+*.obj
+*.ilk
+
+# Premake
+premake5.zip
+premake5/
+
+# Misc
+*.log
+.env

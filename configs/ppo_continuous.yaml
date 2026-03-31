@@ -1,0 +1,30 @@
+# PPO with continuous action space (angle as Box(-97, 97))
+# Best general-purpose agent for Peggle
+
+algo: ppo
+action_mode: continuous
+env: PeggleSim-v0
+
+# Train on all levels with random selection
+level: null
+stage: null
+
+total_timesteps: 1_000_000
+save_freq: 100_000
+eval_freq: 50_000
+eval_episodes: 20
+seed: 42
+verbose: 1
+
+save_dir: checkpoints
+log_dir: logs
+
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 1024
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01

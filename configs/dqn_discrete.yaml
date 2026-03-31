@@ -1,0 +1,28 @@
+# DQN with discrete action space
+# Simple value-based method, good baseline for discrete control
+
+algo: dqn
+action_mode: discrete
+env: PeggleSimDiscrete-v0
+
+level: null
+stage: null
+
+total_timesteps: 500_000
+save_freq: 50_000
+eval_freq: 25_000
+eval_episodes: 20
+seed: 42
+verbose: 1
+
+save_dir: checkpoints
+log_dir: logs
+
+hyperparams:
+  learning_rate: 0.0001
+  buffer_size: 100_000
+  batch_size: 64
+  gamma: 0.99
+  exploration_fraction: 0.3
+  exploration_final_eps: 0.02
+  learning_starts: 500

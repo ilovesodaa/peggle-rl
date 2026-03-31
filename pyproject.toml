@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "peggle-rl"
+version = "0.1.0"
+description = "Reinforcement learning for Peggle Deluxe - simulator + OG game bridge"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Valou" },
+]
+
+keywords = ["peggle", "reinforcement-learning", "gymnasium", "rl", "game-ai"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Games/Entertainment",
+]
+
+dependencies = [
+    "gymnasium>=0.29.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+train = [
+    "stable-baselines3>=2.0.0",
+    "tensorboard>=2.14.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65.0",
+]
+render = [
+    "pygame>=2.5.0",
+]
+og = [
+    "pywin32>=306",
+]
+dev = [
+    "peggle-rl[train,render,og]",
+    "pytest>=7.0",
+    "ruff>=0.1.0",
+]
+all = [
+    "peggle-rl[train,render,og]",
+]
+
+[project.urls]
+Homepage = "https://github.com/ilovesodaa/peggle-rl"
+Repository = "https://github.com/ilovesodaa/peggle-rl"
+Issues = "https://github.com/ilovesodaa/peggle-rl/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["peggle_rl"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

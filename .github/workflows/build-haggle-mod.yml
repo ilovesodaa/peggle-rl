@@ -1,0 +1,105 @@
+# Build the peggle-rl-bridge Haggle mod DLL and upload to GitHub Releases
+#
+# Triggers:
+#   - Push to main with changes in haggle_mod/
+#   - Manual dispatch
+#   - Tag push (v*)
+#
+# The built DLL artifacts (peggle-rl-bridge.dll + haggle-sdk.dll) are:
+#   1. Uploaded as workflow artifacts (always)
+#   2. Attached to a GitHub Release (on tag push)
+
+name: Build Haggle Mod DLL
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'haggle_mod/**'
+    tags:
+      - 'v*'
+  pull_request:
+    paths:
+      - 'haggle_mod/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Needed for creating releases
+
+jobs:
+  build:
+    name: Build Bridge DLL (x86)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone Haggle SDK
+        run: |
+          git clone --recurse-submodules https://github.com/PeggleCommunity/haggle.git haggle_sdk
+
+      - name: Download Premake5
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-windows.zip" -OutFile premake5.zip
+          Expand-Archive premake5.zip -DestinationPath premake5
+          echo "${{ github.workspace }}\premake5" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Generate VS2022 solution
+        working-directory: haggle_mod
+        env:
+          HAGGLE_SDK_PATH: ${{ github.workspace }}/haggle_sdk
+        run: |
+          premake5 vs2022 --file=premake5.lua
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release (x86)
+        working-directory: haggle_mod/build
+        run: |
+          msbuild peggle-rl-bridge.sln /p:Configuration=Release /p:Platform=x86 /m
+
+      - name: List build output
+        run: |
+          Get-ChildItem -Recurse haggle_mod/build/bin/ -Filter *.dll | Format-Table FullName, Length
+
+      - name: Prepare artifacts
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts
+          Copy-Item haggle_mod/build/bin/Release-x86/peggle-rl-bridge.dll artifacts/
+          Copy-Item haggle_mod/build/bin/Release-x86/haggle-sdk.dll artifacts/
+          # Create a zip for the release
+          Compress-Archive -Path artifacts/* -DestinationPath peggle-rl-bridge-${{ github.ref_name }}.zip
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: peggle-rl-bridge-dlls
+          path: artifacts/
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "peggle-rl ${{ github.ref_name }}"
+          body: |
+            ## peggle-rl-bridge mod DLL
+
+            Pre-built Haggle mod DLL for Peggle Deluxe RL bridge.
+
+            ### Installation
+            1. Install [Haggle Mod Loader](https://github.com/PeggleCommunity/haggle-mod-loader) in your Peggle Deluxe directory
+            2. Extract both DLLs to the `mods/` folder in your Peggle directory
+            3. Launch via `Haggle.exe`
+
+            ### Files
+            - `peggle-rl-bridge.dll` - The RL bridge mod
+            - `haggle-sdk.dll` - Required Haggle SDK runtime
+          files: |
+            peggle-rl-bridge-${{ github.ref_name }}.zip
+            artifacts/peggle-rl-bridge.dll
+            artifacts/haggle-sdk.dll
+          draft: false
+          prerelease: false
