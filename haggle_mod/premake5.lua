@@ -65,6 +65,7 @@ workspace "peggle-rl-bridge"
         includedirs {
             "src/",
             HAGGLE_SDK_PATH .. "/src/haggle/",
+            HAGGLE_SDK_PATH .. "/src/haggle/sdk/Sexy/",
             HAGGLE_SDK_PATH .. "/deps/minhook/include/",
         }
 
