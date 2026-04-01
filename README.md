@@ -94,7 +94,14 @@ with PeggleBridgeClient() as client:
 
 ### Building the Mod DLL
 
-The Haggle mod is automatically built by GitHub Actions on tag push and the DLLs are uploaded to Releases. To build locally:
+The release process is fully automated via two GitHub Actions workflows:
+
+1. **`bump-tag.yml`** – Triggers on every push to `main`/`master` that changes `haggle_mod/`.
+   Automatically bumps the patch version tag (e.g. `v1.0.0` → `v1.0.1`) and pushes it.
+2. **`build-haggle-mod.yml`** – Triggers on every `v*` tag push.
+   Builds the DLLs and publishes them as a GitHub Release.
+
+To build locally:
 
 ```
 cd haggle_mod
@@ -168,7 +175,8 @@ peggle-rl/
     ...
   .github/
     workflows/
-      build-haggle-mod.yml  # CI: build DLL + upload to Releases
+      bump-tag.yml          # CI: auto-bump semver tag on haggle_mod changes
+      build-haggle-mod.yml  # CI: build DLL + upload to Releases (triggered by tag)
 ```
 
 ## Credits
