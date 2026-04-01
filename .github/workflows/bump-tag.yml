@@ -1,0 +1,39 @@
+# Bump the semver tag on every push to main/master that changes haggle_mod/.
+#
+# On a qualifying push this workflow:
+#   1. Finds the latest v* tag (defaults to v1.0.0 if none exists).
+#   2. Increments the patch component (e.g. v1.0.0 → v1.0.1).
+#   3. Pushes the new tag, which then triggers the build-haggle-mod workflow
+#      to build the DLLs and publish a GitHub Release.
+
+name: Bump version tag
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'haggle_mod/**'
+
+permissions:
+  contents: write  # Required to push the new tag
+
+jobs:
+  bump-tag:
+    name: Bump patch version tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history is needed so all existing tags are visible
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag_prefix: v
+          default_bump: patch
+          # Release branches – both common default names are covered
+          release_branches: main,master

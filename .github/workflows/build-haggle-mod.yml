@@ -1,9 +1,9 @@
 # Build the peggle-rl-bridge Haggle mod DLL and upload to GitHub Releases
 #
 # Triggers:
-#   - Push to main with changes in haggle_mod/
+#   - Tag push (v*) – tags are created automatically by bump-tag.yml on every
+#     qualifying push to main/master that changes haggle_mod/
 #   - Manual dispatch
-#   - Tag push (v*)
 #
 # The built DLL artifacts (peggle-rl-bridge.dll + haggle-sdk.dll) are:
 #   1. Uploaded as workflow artifacts (always)
@@ -13,14 +13,8 @@ name: Build Haggle Mod DLL
 
 on:
   push:
-    branches: [main, master]
-    paths:
-      - 'haggle_mod/**'
     tags:
       - 'v*'
-  pull_request:
-    paths:
-      - 'haggle_mod/**'
   workflow_dispatch:
 
 permissions:
